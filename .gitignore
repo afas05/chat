@@ -2,3 +2,9 @@
 .env.*.php
 .env.php
 .env
+
+\.idea/
+
+public/assets/app/
+
+vendor/
