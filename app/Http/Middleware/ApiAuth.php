@@ -17,9 +17,19 @@ class ApiAuth
         try {
             $user = auth()->userOrFail();
         } catch (\Tymon\JWTAuth\Exceptions\UserNotDefinedException $e) {
-            return response()->json(['status' => 'Authorization Token not found']);
+            return response()->json(
+                [
+                    'status' => 301,
+                    'message' => 'Authorization Token not found'
+                ]
+            );
         } catch (\Tymon\JWTAuth\Exceptions\TokenExpiredException $e) {
-            return response()->json(['status' => 'Token expired']);
+            return response()->json(
+                [
+                    'status' => 301,
+                    'message' => 'Token expired'
+                ]
+            );
         }
 
         return $next($request);

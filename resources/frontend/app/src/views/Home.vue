@@ -8,7 +8,7 @@
               <li class="header">Active Chats</li>
               <li>
                   <a href="#">
-                      <i class="fa fa-home" aria-hidden="true"></i> Homepage
+                      <i class="fa fa-home" aria-hidden="true"></i> {{chat.name}}
                   </a>
               </li>
           </ul>
@@ -16,16 +16,23 @@
 
       <div class="content-container">
 
-          <div class="container-fluid">
-              <!-- Main component for a primary marketing message or call to action -->
-              <div class="overflow-auto">
-                  <h1>Navbar example</h1>
-                  <p>This example is a quick exercise to illustrate how the default, static and fixed to top navbar work. It includes the responsive CSS and HTML, so it also adapts to your viewport and device.</p>
-                  <p>To see the difference between static and fixed top navbars, just scroll.</p>
-                  <p>
-                      <a class="btn btn-lg btn-primary" href="../../components/#navbar" role="button">View navbar docs &raquo;</a>
-                  </p>
+          <div class="container">
+              <nav aria-label="breadcrumb">
+                  <ol class="breadcrumb">
+                      <li class="breadcrumb-item active" aria-current="page">{{chat.name}}</li>
+                  </ol>
+              </nav>
+
+              <div class="overflow-auto chat-box">
+
+                  <div v-for="message in messages" v-bind:key="message" class="message mine">
+                      <p>{{message}}</p>
+                  </div>
+                  <div v-for="message in messages" v-bind:key="message" class="message notmine">
+                      <p>{{message}}</p>
+                  </div>
               </div>
+              <textarea class="form-control input-message" id="exampleFormControlTextarea1" rows="3"></textarea>
           </div>
       </div>
   </div>
@@ -38,16 +45,31 @@ import {post} from "../handlers/request";
 export default {
     data() {
         return {
-            username: "LLoooLLL"
+            username: "LLoooLLL",
+            chat: {
+                name: "New chat"
+            },
+            messages: {
+                0: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                1: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                2: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                3: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                4: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                5: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                6: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                7: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                8: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+                9: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
+            }
         }
     },
   name: "home",
   methods: {
   },
-    created() {
-        let r = post('/api/info', {});
-        console.log(r);
-    }
+  created() {
+    let r = post('/api/info', {});
+    console.log(r);
+  }
 };
 </script>
 <style>
@@ -134,5 +156,25 @@ export default {
 
     .content-container {
         padding-left: 220px;
+    }
+
+    .chat-box {
+        height: 300px;
+    }
+
+    .input-message {
+        width: 90%;
+    }
+
+    .message {
+        border-radius: 10px;
+        width: 20rem;
+    }
+    .mine {
+        background-color: #0C9A9A;
+        margin-left: 55%;
+    }
+    .notmine {
+        background-color: #5c2699;
     }
 </style>
