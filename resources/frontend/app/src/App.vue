@@ -1,14 +1,47 @@
 <template>
   <div id="app">
     <div id="nav">
-      <router-link to="/login">Login</router-link> |
-      <router-link to="/registration">Registration</router-link>
+      <span v-if="!isLogged">
+        <router-link to="/login">Login</router-link> |
+        <router-link to="/registration">Registration</router-link>
+      </span>
+      <span v-else><a href="" @click="logout">Logout</a></span>
+
     </div>
       <transition name="slide-fade">
           <router-view></router-view>
       </transition>
   </div>
+
 </template>
+
+<script>
+    import {post} from "./handlers/request";
+
+    export default {
+        data() {
+            return {
+                isLogged: false
+            }
+        },
+        methods: {
+            logout(evt) {
+                evt.preventDefault();
+                post('/api/auth/logout', {});
+                localStorage.removeItem('token');
+                this.$router.push('/login');
+            }
+        },
+        watch: {
+            $route (){
+                this.isLogged = localStorage.token !== undefined;
+            }
+        },
+        created() {
+            this.isLogged = localStorage.token !== undefined;
+        }
+    };
+</script>
 
 <style>
 #app {
@@ -21,11 +54,19 @@
 
 #nav {
   padding: 30px;
+
+
 }
 
 #nav a {
   font-weight: bold;
   color: #2c3e50;
+
+}
+
+#nav span {
+    position: absolute;
+    right: 150px;
 }
 
 #nav a.router-link-exact-active {

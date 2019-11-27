@@ -50,9 +50,9 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255', 'min:2'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['required', 'string', 'min:6'],
         ]);
     }
 
@@ -74,10 +74,11 @@ class RegisterController extends Controller
     public function addNewUser(Request $request)
     {
         $userData = $request->post();
-
-        if ($this->validator($userData)->fails()) {
+        $errors = $this->validator($userData)->errors()->all();
+        if (!empty($errors)) {
             return response()->json([
-                'result' => false
+                'result' => false,
+                'errors' => $errors
             ]);
         }
 

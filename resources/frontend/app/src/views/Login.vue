@@ -1,7 +1,10 @@
 <template>
     <div class="login">
         <div class="container">
-            <b-form @submit="onSubmit" @reset="onReset" v-if="show">
+            <b-alert show variant="danger" v-if="hasErrors">
+                Wrong credentials
+            </b-alert>
+            <b-form @submit="onSubmit" v-if="show">
                 <b-form-group
                     id="input-group-1"
                     label="Login:"
@@ -41,6 +44,8 @@
 </template>
 
 <script>
+    import axios from "axios";
+
     export default {
         data() {
             return {
@@ -48,28 +53,30 @@
                     login: '',
                     password: ''
                 },
-                show: true
+                show: true,
+                hasErrors: false
             }
         },
         name: "Login",
         methods: {
             onSubmit(evt) {
-                evt.preventDefault()
-                alert(JSON.stringify(this.form))
+                evt.preventDefault();
+                this.hasErrors = false;
+
+                axios.post(
+                    "/api/auth/login",
+                    {
+                        email: this.form.login,
+                        password: this.form.password
+                    }
+                ).then(response => {
+                    let token = response.data.access_token;
+                    localStorage.token = token;
+                    this.$router.push('/');
+                }).catch(() => {
+                    this.hasErrors = true;
+                });
             },
-            onReset(evt) {
-                evt.preventDefault()
-                // Reset our form values
-                this.form.email = ''
-                this.form.name = ''
-                this.form.food = null
-                this.form.checked = []
-                // Trick to reset/clear native browser form validation state
-                this.show = false
-                this.$nextTick(() => {
-                    this.show = true
-                })
-            }
         }
     }
 </script>

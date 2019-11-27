@@ -2,8 +2,13 @@
     <div class="reg">
         <div class="container">
 
-            <p v-if="success">Congratulations!!!</p>
-            <p v-if="error">Dumb!!!</p>
+
+            <b-alert show variant="danger" v-if="hasErrors">
+                <ul>
+                    <li  v-for="error in errors" v-bind:key="error">{{error}}</li>
+                </ul>
+            </b-alert>
+            <b-alert show variant="success" v-if="success">Congratulations!!!</b-alert>
 
             <b-form @submit="onSubmit" v-if="show">
                 <b-form-group
@@ -57,9 +62,6 @@
 
                 <b-button type="submit" variant="primary">Register</b-button>
             </b-form>
-            <b-card class="mt-3" header="Form Data Result">
-                <pre class="m-0">{{ form }}</pre>
-            </b-card>
         </div>
     </div>
 </template>
@@ -77,14 +79,16 @@
                 },
                 show: true,
                 success: false,
-                error: false,
                 errors: [],
+                hasErrors: false
             }
         },
         name: "Registration",
         methods: {
             onSubmit(evt) {
                 evt.preventDefault();
+                this.hasErrors = false;
+                this.success = false;
                 let data = this.form;
 
                 axios.post(
@@ -95,12 +99,12 @@
                         password: data.password
                     }
                 ).then(response => {
-                    console.log(this.success);
-                    console.log(this.error);
+
                     if (response.data.result) {
                         this.success = true;
                     } else {
-                        this.error = true;
+                        this.hasErrors = true;
+                        this.errors = response.data.errors;
                     }
                 }).catch(error => {
                     console.log(error);
