@@ -18,6 +18,21 @@ class AppServiceProvider extends ServiceProvider
             'App\Repository\UserRepositoryInterface',
             'App\Repository\UserRepository'
         );
+
+        $this->app->bind(
+            'App\Repository\UserAssigmentRepositoryInterface',
+            'App\Repository\UserAssigmentRepository'
+        );
+
+        $this->app->bind(
+            'App\Repository\ChatRepositoryInterface',
+            'App\Repository\ChatRepository'
+        );
+
+        $this->app->bind(
+            'App\Repository\MessageRepositoryInterface',
+            'App\Repository\MessageRepository'
+        );
     }
 
     /**

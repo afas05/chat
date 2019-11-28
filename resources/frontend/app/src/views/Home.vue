@@ -6,7 +6,7 @@
           </div>
           <ul class="sidebar-navigation">
               <li class="header">Active Chats</li>
-              <li>
+              <li v-for="chat in chats" :key="chat">
                   <a href="#">
                       <i class="fa fa-home" aria-hidden="true"></i> {{chat.name}}
                   </a>
@@ -19,18 +19,12 @@
           <div class="container">
               <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
-                      <li class="breadcrumb-item active" aria-current="page">{{chat.name}}</li>
+                      <li class="breadcrumb-item active" aria-current="page">{{chats[0].name}}</li>
                   </ol>
               </nav>
 
               <div class="overflow-auto chat-box">
-
-                  <div v-for="message in messages" v-bind:key="message" class="message mine">
-                      <p>{{message}}</p>
-                  </div>
-                  <div v-for="message in messages" v-bind:key="message" class="message notmine">
-                      <p>{{message}}</p>
-                  </div>
+                  <message :message="message"  v-for="message in messages" v-bind:key="message" ></message>
               </div>
               <textarea class="form-control input-message" id="exampleFormControlTextarea1" rows="3"></textarea>
           </div>
@@ -41,34 +35,32 @@
 <script>
 
 import {post} from "../handlers/request";
+import message from "../components/message";
 
 export default {
+    components: {message},
     data() {
         return {
-            username: "LLoooLLL",
-            chat: {
-                name: "New chat"
-            },
-            messages: {
-                0: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                1: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                2: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                3: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                4: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                5: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                6: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                7: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                8: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-                9: "Hi dasdsadsa ldasdasd asdas as asdsad adasd a sdasd aa asd sa",
-            }
+            username: null,
+            chats: {},
+            messages: {},
+            currentChat: null
         }
     },
   name: "home",
   methods: {
   },
-  created() {
-    let r = post('/api/info', {});
-    console.log(r);
+  beforeCreate() {
+    post('/api/info', {}).then(
+      (response) => {
+        this.username = response.data.name;
+        this.chats = response.data.chats;
+        this.messages = response.data.messages;
+      }
+    );
+  },
+  comments: {
+    message
   }
 };
 </script>
@@ -166,15 +158,5 @@ export default {
         width: 90%;
     }
 
-    .message {
-        border-radius: 10px;
-        width: 20rem;
-    }
-    .mine {
-        background-color: #0C9A9A;
-        margin-left: 55%;
-    }
-    .notmine {
-        background-color: #5c2699;
-    }
+
 </style>

@@ -38,9 +38,4 @@ class UserRepository extends BaseRepository implements UserRepositoryInterface
                 ]
             );
     }
-
-//    public function getUserWithCredentials(array $credentials)
-//    {
-//        $this->model
-//    }
 }
