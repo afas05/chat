@@ -7,8 +7,10 @@
           <ul class="sidebar-navigation">
               <li class="header">Active Chats</li>
               <li v-for="chat in chats" :key="chat">
-                  <a href="#">
-                      <i class="fa fa-home" aria-hidden="true"></i> {{chat.name}}
+                  <a href="#" v-on:click="getChatData(chat.id)">
+                      <i class="fa fa-home" aria-hidden="true"></i>
+                      <span v-if="currentChat === chat.id"><b>{{chat.name}}</b></span>
+                      <span v-else>{{chat.name}}</span>
                   </a>
               </li>
           </ul>
@@ -19,14 +21,14 @@
           <div class="container">
               <nav aria-label="breadcrumb">
                   <ol class="breadcrumb">
-                      <li class="breadcrumb-item active" aria-current="page">{{chats[0].name}}</li>
+                      <li class="breadcrumb-item active" aria-current="page">{{chats[currentChat].name}}</li>
                   </ol>
               </nav>
 
               <div class="overflow-auto chat-box">
-                  <message :message="message"  v-for="message in messages" v-bind:key="message" ></message>
+                  <message :message="message" :current-user="username"  v-for="message in messages" v-bind:key="message" ></message>
               </div>
-              <textarea class="form-control input-message" id="exampleFormControlTextarea1" rows="3"></textarea>
+              <textarea v-model="message" class="form-control input-message" id="message-box" rows="3" @keyup.enter="sendMessage"></textarea>
           </div>
       </div>
   </div>
@@ -49,6 +51,29 @@ export default {
     },
   name: "home",
   methods: {
+    sendMessage(evt) {
+        evt.preventDefault();
+        let data = {
+            chatId: this.currentChat,
+            message: this.message
+        };
+
+        this.message = null;
+
+        post('/api/send', data);
+    },
+    getChatData(id) {
+        if (this.currentChat === id) {
+            return;
+        }
+
+        post('/api/chatData', {id: id}).then(
+            (response) => {
+                this.messages = response.data.messages;
+                this.currentChat = response.data.id;
+            }
+        );
+    }
   },
   beforeCreate() {
     post('/api/info', {}).then(
@@ -56,11 +81,16 @@ export default {
         this.username = response.data.name;
         this.chats = response.data.chats;
         this.messages = response.data.messages;
+        this.currentChat = response.data.chats[Object.keys(response.data.chats)[0]].id;
+
+          for(const chat in this.chats) {
+              this.$echo.private('chatId-' + this.chats[chat].id).listen('SendMessage', (payload) => {
+                  console.log(payload);
+                  this.messages.push(payload);
+              });
+          }
       }
     );
-  },
-  comments: {
-    message
   }
 };
 </script>

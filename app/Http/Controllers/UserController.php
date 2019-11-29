@@ -45,7 +45,7 @@ class UserController extends Controller
 
         foreach ($chats as $chat) {
             $chatInfo = $this->chat->get($chat->chat_id);
-            $chatsList[] = [
+            $chatsList[$chatInfo->id] = [
                 'name' => $chatInfo->name,
                 'id' => $chatInfo->id
             ];

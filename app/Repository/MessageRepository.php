@@ -31,10 +31,11 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
         $messages = [];
 
         foreach ($messagesData as $message) {
+
             $messages[] = [
                 'text' => $message->text,
                 'author' => $message->name,
-                'date' => $message->updated_at,
+                'time' => date('Y-m-d H:i:s', strtotime($message->updated_at)),
                 'style' => $message->user_id == $userId ? 'mine' : 'notmine'
             ];
         }

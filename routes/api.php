@@ -27,9 +27,13 @@ Route::group([
 });
 
 Route::post('/registration', 'Auth\RegisterController@addNewUser');
+Route::post('/messagetest', 'ChatController@sendMessage');
 
 Route::group([
         'middleware' => 'jwt_check'
     ], function(){
     Route::post('/info', 'UserController@info');
+    Route::post('/send', 'ChatController@sendMessage');
+    Route::post('/chatData', 'ChatController@chatData');
 });
+
