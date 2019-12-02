@@ -27,7 +27,7 @@ Route::group([
 });
 
 Route::post('/registration', 'Auth\RegisterController@addNewUser');
-Route::post('/messagetest', 'ChatController@sendMessage');
+Route::post('/search', 'MessagesController@messageSearch');
 
 Route::group([
         'middleware' => 'jwt_check'

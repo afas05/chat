@@ -85,7 +85,6 @@ export default {
 
           for(const chat in this.chats) {
               this.$echo.private('chatId-' + this.chats[chat].id).listen('SendMessage', (payload) => {
-                  console.log(payload);
                   this.messages.push(payload);
               });
           }

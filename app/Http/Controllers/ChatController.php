@@ -37,7 +37,8 @@ class ChatController extends Controller
         $message = $this->message->create([
             'chat_id' => $inputData['chatId'],
             'user_id' => $user->id,
-            'text' => $inputData['message']
+            'text' => $inputData['message'],
+            'date' => date('Y-m-d H:i:s')
         ]);
 
         $chat = $this->chat->get($inputData['chatId']);
@@ -55,6 +56,10 @@ class ChatController extends Controller
         }
 
         $messages = $this->message->getChatMessages($chatId, $user->id);
+
+        foreach ($messages as &$message) {
+            $message['author'] = $this->user->get($message['userId'])->name;
+        }
 
         return response()->json([
             'messages' => $messages,

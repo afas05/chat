@@ -53,6 +53,10 @@ class UserController extends Controller
 
         $messages = $this->message->getChatMessages($chats[0]->chat_id, $user->id);
 
+        foreach ($messages as &$message) {
+            $message['author'] = $this->user->get($message['userId'])->name;
+        }
+
         $outputData = [
             'name' => $user->name,
             'chats' => $chatsList,

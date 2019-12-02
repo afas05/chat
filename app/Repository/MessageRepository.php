@@ -6,6 +6,7 @@ namespace App\Repository;
 
 use App\Message;
 
+
 class MessageRepository extends BaseRepository implements MessageRepositoryInterface
 {
     public function __construct(Message $message)
@@ -16,16 +17,7 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
     public function getChatMessages(int $chatId, int $userId)
     {
         $messagesData = $this->model
-            ->select(
-                [
-                    'messages.text',
-                    'messages.updated_at',
-                    'messages.user_id',
-                    'users.name',
-                ]
-            )
-            ->join('users', 'users.id', '=', 'messages.user_id')
-            ->where('messages.chat_id', $chatId)
+            ->where('chat_id', $chatId)
             ->get();
 
         $messages = [];
@@ -33,12 +25,24 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
         foreach ($messagesData as $message) {
 
             $messages[] = [
+                'userId' => $message->user_id,
                 'text' => $message->text,
-                'author' => $message->name,
-                'time' => date('Y-m-d H:i:s', strtotime($message->updated_at)),
-                'style' => $message->user_id == $userId ? 'mine' : 'notmine'
+                'time' => date('Y-m-d H:i:s', strtotime($message->date)),
             ];
         }
+
+        return $messages;
+    }
+
+    public function messageSearch(string $text)
+    {
+        $messages = $this->model
+            ->whereRaw(
+                ['$text' => ['$search' => $text]]
+            )
+            ->orderBy(['score' => ['$meta' => 'textScore']])
+            ->orderBy('_id', 'asc')
+            ->get();
 
         return $messages;
     }
