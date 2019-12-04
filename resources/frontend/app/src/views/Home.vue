@@ -25,7 +25,7 @@
                   </ol>
               </nav>
 
-              <div class="overflow-auto chat-box">
+              <div class="overflow-auto chat-box" ref="chatBox">
                   <message :message="message" :current-user="username"  v-for="message in messages" v-bind:key="message" ></message>
               </div>
               <textarea v-model="message" class="form-control input-message" id="message-box" rows="3" @keyup.enter="sendMessage"></textarea>
@@ -45,8 +45,10 @@ export default {
         return {
             username: null,
             chats: {},
+            chat: {},
             messages: {},
-            currentChat: null
+            currentChat: null,
+            message: null
         }
     },
   name: "home",
@@ -63,17 +65,19 @@ export default {
         post('/api/send', data);
     },
     getChatData(id) {
-        if (this.currentChat === id) {
-            return;
-        }
+      if (this.currentChat === id) {
+        return;
+      }
 
-        post('/api/chatData', {id: id}).then(
-            (response) => {
-                this.messages = response.data.messages;
-                this.currentChat = response.data.id;
-            }
-        );
+      post('/api/chatData', {id: id}).then(
+        (response) => {
+          this.messages = response.data.messages;
+          this.currentChat = response.data.id;
+        }
+      );
     }
+  },
+  mounted() {
   },
   beforeCreate() {
     post('/api/info', {}).then(
@@ -83,14 +87,14 @@ export default {
         this.messages = response.data.messages;
         this.currentChat = response.data.chats[Object.keys(response.data.chats)[0]].id;
 
-          for(const chat in this.chats) {
-              this.$echo.private('chatId-' + this.chats[chat].id).listen('SendMessage', (payload) => {
-                  this.messages.push(payload);
-              });
-          }
+        for(const chat in this.chats) {
+          this.$echo.private('chatId-' + this.chats[chat].id).listen('SendMessage', (payload) => {
+            this.messages.push(payload);
+          });
+        }
       }
     );
-  }
+  },
 };
 </script>
 <style>

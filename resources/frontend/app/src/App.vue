@@ -29,6 +29,7 @@
                 evt.preventDefault();
                 post('/api/auth/logout', {});
                 localStorage.removeItem('token');
+                localStorage.removeItem('tokenExpired');
                 this.$router.push('/login');
             }
         },

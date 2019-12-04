@@ -72,6 +72,7 @@
                 ).then(response => {
                     let token = response.data.access_token;
                     localStorage.token = token;
+                    localStorage.tokenExpired = Date.now() + 3600 * 1000;
                     this.$router.push('/');
                 }).catch(() => {
                     this.hasErrors = true;
