@@ -34,15 +34,26 @@ class MessageRepository extends BaseRepository implements MessageRepositoryInter
         return $messages;
     }
 
-    public function messageSearch(string $text)
+    public function messageSearch(string $text, array $chatIds)
     {
-        $messages = $this->model
-            ->whereRaw(
-                ['$text' => ['$search' => $text]]
-            )
-            ->orderBy(['score' => ['$meta' => 'textScore']])
+        $messages = [];
+        $messagesData = $this->model
+            ->where('text', 'regexp', '/.*' . $text . '/i')
+            ->whereIn('chat_id', $chatIds)
+            ->orderBy('date', 'asc')
             ->orderBy('_id', 'asc')
+            ->take(10)
             ->get();
+
+        foreach ($messagesData as $message) {
+
+            $messages[] = [
+                'userId' => $message->user_id,
+                'text' => $message->text,
+                'time' => date('Y-m-d H:i:s', strtotime($message->date)),
+                'in' => $message->chat_id
+            ];
+        }
 
         return $messages;
     }

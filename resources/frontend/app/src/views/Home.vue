@@ -6,6 +6,7 @@
           </div>
           <ul class="sidebar-navigation">
               <li class="header">Active Chats</li>
+              <li><b-input v-model="searchText" placeholder="search" @keyup.enter="searchMessage"></b-input></li>
               <li v-for="chat in chats" :key="chat">
                   <a href="#" v-on:click="getChatData(chat.id)">
                       <i class="fa fa-home" aria-hidden="true"></i>
@@ -48,26 +49,32 @@ export default {
             chat: {},
             messages: {},
             currentChat: null,
-            message: null
+            message: null,
+            searchText: null
         }
     },
   name: "home",
   methods: {
     sendMessage(evt) {
-        evt.preventDefault();
-        let data = {
-            chatId: this.currentChat,
-            message: this.message
-        };
+      evt.preventDefault();
+      let text = this.message;
+      this.message = null;
 
-        this.message = null;
+      let data = {
+          chatId: this.currentChat,
+          message: text
+      };
 
-        post('/api/send', data);
+
+
+      post('/api/send', data);
     },
     getChatData(id) {
       if (this.currentChat === id) {
         return;
       }
+
+      this.$delete(this.chats, 'search');
 
       post('/api/chatData', {id: id}).then(
         (response) => {
@@ -75,6 +82,18 @@ export default {
           this.currentChat = response.data.id;
         }
       );
+    },
+    searchMessage(evt) {
+      evt.preventDefault();
+
+      let search = this.searchText;
+      this.searchText = null;
+
+      post('/api/search', {searchFor: search}).then((response) => {
+        this.$set(this.chats, 'search', {name: 'Search Results', id: 'search'});
+        this.currentChat = 'search';
+        this.messages = response.data;
+      });
     }
   },
   mounted() {

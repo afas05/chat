@@ -6,6 +6,7 @@
         <p v-else>
             <b>{{message.author}}</b>
         </p>
+        <p v-if="message.in">in chat {{message.in}}</p>
         <p>{{message.text}}</p>
         <p class="time">{{message.time}}</p>
     </div>
